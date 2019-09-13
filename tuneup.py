@@ -18,7 +18,9 @@ def profile(func):
     def cProf(*args, **kwargs):
         profile = cProfile.Profile()
         retval = profile.runcall(func, *args, **kwargs)
-        profile.print_stats()
+        profile.dump_stats("dump.txt")
+        ps = pstats.Stats("dump.txt")
+        ps.sort_stats("cumulative")
         ps.print_stats()
         return retval
     # raise NotImplementedError("Complete this decorator function")
@@ -40,7 +42,7 @@ def is_duplicate(title, movies):
 
 
 
-# @profile
+@profile
 def find_duplicate_movies(src):
     """Returns a list of duplicate movies from a src list"""
     movies = sorted(read_movies(src))
@@ -61,9 +63,10 @@ def timeit_helper(command):
     fin = min(t)/total_runs
     print("Best time across {} repeats of {} runs per repeat: {} sec".format(repeats, total_runs, fin))
 
+
 def main():
     """Computes a list of duplicate movie entries"""
-    timeit_helper(find_duplicate_movies)
+    # timeit_helper(find_duplicate_movies)
     result = find_duplicate_movies('movies.txt')
     print('Found {} duplicate movies:'.format(len(result)))
     print('\n'.join(result))
